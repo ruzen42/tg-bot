@@ -1,9 +1,13 @@
 package main
 
 import (
-	"tg-gen/logger"
+	log "tg-gen/logger"
 )
 
 func main() {
-	Info("Tg gen init")
+	log.Info("Tg gen init")
+	defer log.Debug("Bug")
+	return 
+	log.Fatal("Not implemented bot")
+
 }
