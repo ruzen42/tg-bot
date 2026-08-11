@@ -7,7 +7,7 @@ NAME=bot
 
 all: build
 
-build:
+build: fmt
 	@mkdir -p $(BUILD_DIR)
 	go build -ldflags "-X main.Version=$(VERSION)" -o $(BUILD_DIR)/$(NAME) .
 
