@@ -9,7 +9,7 @@ import (
 
 func main() {
 	var token = os.Getenv("TOKEN")
-	if token == nil {
+	if token == "" {
 		log.Fatal("token variable is not specified")
 	}
 
