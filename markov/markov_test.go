@@ -1,23 +1,43 @@
 package markov
 
 import (
-	"time"
+	"fmt"
 	"math/rand"
 	"testing"
-	"fmt"
+	"time"
+	"strings"
 )
 
 func TestChain(t *testing.T) {
 	rand.Seed(time.Now().UnixNano())
 
-	chain := NewMChain()
+	chain := NewMChain(2)
 
-	text := `в лесу родилась елочка в лесу она росла зимой и летом стройная зеленая была 
-	метель ей пела песенку спи елочка бай бай мороз снежком укутывал смотри не замерзай`
-	
+	/*
+		content, err := os.ReadFile("chat_logs.txt")
+		if err != nil {
+			panic(err)
+		}
+		text := string(content)
+	*/
+
+	text := `привет, как дела?
+	нормально, сижу пишу код на голанге.
+	а я пошел пить кофе.
+	завтра во сколько собираемся?
+	думаю часам к восьми.
+	сижу пишу код, ничего не получается!`
+
+	text = strings.ToLower(text)
+	text = strings.ReplaceAll(text, ",", "")
+	text = strings.ReplaceAll(text, ".", "")
+	text = strings.ReplaceAll(text, "?", "")
+	text = strings.ReplaceAll(text, "!", "")
+
 	chain.Build(text)
+	fmt.Printf("prefixes: %d\n\n", len(chain.prefixes))
 
-	generatedText := chain.Generate("в", 500)
-
-	fmt.Println(generatedText)
+	for i := 1; i <= 5; i++ {
+		fmt.Printf("msg %d: %s\n", i, chain.Generate(15))
+	}
 }
