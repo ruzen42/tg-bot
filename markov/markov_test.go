@@ -3,9 +3,9 @@ package markov
 import (
 	"fmt"
 	"math/rand"
+	"strings"
 	"testing"
 	"time"
-	"strings"
 )
 
 func TestChain(t *testing.T) {
@@ -35,7 +35,7 @@ func TestChain(t *testing.T) {
 	text = strings.ReplaceAll(text, "!", "")
 
 	chain.Build(text)
-	fmt.Printf("prefixes: %d\n\n", len(chain.prefixes))
+	fmt.Printf("Prefixes: %d\n\n", len(chain.Prefixes))
 
 	for i := 1; i <= 5; i++ {
 		fmt.Printf("msg %d: %s\n", i, chain.Generate(15))

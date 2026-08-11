@@ -1,21 +1,51 @@
 package markov
 
 import (
+	"encoding/gob"
 	"math/rand"
+	"os"
 	"strings"
 )
 
 type MChain struct {
-	prefixLen   int                 // N len
-	transitions map[string][]string // map transitions
-	prefixes    []string            // all keys
+	PrefixLen   int                 // N len
+	Transitions map[string][]string // map Transitions
+	Prefixes    []string            // all keys
 }
 
-func NewMChain(prefixLen int) *MChain {
+func (c *MChain) Save(filename string) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	encoder := gob.NewEncoder(file)
+	return encoder.Encode(c)
+}
+
+func LoadChain(filename string) (*MChain, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	var chain MChain
+	decoder := gob.NewDecoder(file)
+	err = decoder.Decode(&chain)
+	if err != nil {
+		return nil, err
+	}
+
+	return &chain, nil
+}
+
+func NewMChain(PrefixLen int) *MChain {
 	return &MChain{
-		prefixLen:   prefixLen,
-		transitions: make(map[string][]string),
-		prefixes:    make([]string, 0),
+		PrefixLen:   PrefixLen,
+		Transitions: make(map[string][]string),
+		Prefixes:    make([]string, 0),
 	}
 }
 
@@ -26,30 +56,30 @@ func buildKey(words []string) string {
 func (c *MChain) Build(text string) {
 	words := strings.Fields(text)
 
-	if len(words) <= c.prefixLen {
+	if len(words) <= c.PrefixLen {
 		return
 	}
 
-	for i := 0; i < len(words)-c.prefixLen; i++ {
-		prefixSlice := words[i : i+c.prefixLen]
+	for i := 0; i < len(words)-c.PrefixLen; i++ {
+		prefixSlice := words[i : i+c.PrefixLen]
 		prefixKey := buildKey(prefixSlice)
 
-		nextWord := words[i+c.prefixLen]
+		nextWord := words[i+c.PrefixLen]
 
-		if _, exists := c.transitions[prefixKey]; !exists {
-			c.prefixes = append(c.prefixes, prefixKey)
+		if _, exists := c.Transitions[prefixKey]; !exists {
+			c.Prefixes = append(c.Prefixes, prefixKey)
 		}
 
-		c.transitions[prefixKey] = append(c.transitions[prefixKey], nextWord)
+		c.Transitions[prefixKey] = append(c.Transitions[prefixKey], nextWord)
 	}
 }
 
 func (c *MChain) Generate(n int) string {
-	if len(c.prefixes) == 0 {
+	if len(c.Prefixes) == 0 {
 		return ""
 	}
 
-	startPrefix := c.prefixes[rand.Intn(len(c.prefixes))]
+	startPrefix := c.Prefixes[rand.Intn(len(c.Prefixes))]
 
 	currentWords := strings.Split(startPrefix, " ")
 
@@ -58,7 +88,7 @@ func (c *MChain) Generate(n int) string {
 	for i := 0; i < n; i++ {
 		currentKey := buildKey(currentWords)
 
-		possibleNextWords, exists := c.transitions[currentKey]
+		possibleNextWords, exists := c.Transitions[currentKey]
 		if !exists || len(possibleNextWords) == 0 {
 			break
 		}
