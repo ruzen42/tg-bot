@@ -1,18 +1,13 @@
 package markov
 
 import (
-	"math/rand"
 	"testing"
-	"time"
 	"os"
 	"fmt"
-//	"encoding/gob"
 )
 
 func TestChain(t *testing.T) {
-	rand.Seed(time.Now().UnixNano())
-
-	chain := NewMChain(2)
+	chain := NewMChain(4)
 	data, err := os.ReadFile("export.txt")
 	
 	if err != nil {
@@ -23,16 +18,5 @@ func TestChain(t *testing.T) {
 
 	fmt.Println(chain.Generate(10))
 	
-	/*
-	file, err := os.Create("chain.gob")
-
-	if err != nil {
-		return
-	}
-	defer file.Close()
-
-	enc := gob.NewEncoder(file)
-	if err := enc.Encode(chain); err != nil {
-		return
-	}*/
+	chain.Save("../bin/slackware.gob")
 }
