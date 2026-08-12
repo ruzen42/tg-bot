@@ -2,8 +2,10 @@ package main
 
 import (
 	tg "gopkg.in/telebot.v4"
+	"math/rand"
 	"os"
 	log "tg-gen/logger"
+	"tg-gen/markov"
 	"time"
 )
 
@@ -21,11 +23,16 @@ func main() {
 	b, err := tg.NewBot(pref)
 	if err != nil {
 		log.Fatal(err.Error())
-		return
 	}
 
-	b.Handle("/ping", func(c tg.Context) error {
-		return c.Send("pong")
+	chain, err := markov.LoadChain("bin/chain.gob")
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	b.Handle(tg.OnText, func(c tg.Context) error {
+		return c.Send(chain.Generate(rand.Intn(10) + 5))
 	})
 
 	b.Start()

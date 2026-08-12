@@ -1,5 +1,4 @@
-GC=go
-BUILD_DIR=output
+BUILD_DIR=bin
 VERSION=0.1.0
 NAME=bot
 
