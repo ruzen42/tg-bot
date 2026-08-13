@@ -1,6 +1,7 @@
 BUILD_DIR=bin
-VERSION=0.1.0
+VERSION=0.1.1
 NAME=bot
+TOKEN != cat .env
 
 .PHONY: all build clean run fmt
 
@@ -14,7 +15,7 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 run: build
-	export $(cat .env)
+	export $(TOKEN) 
 	./$(BUILD_DIR)/$(NAME)
 
 fmt:

@@ -14,8 +14,17 @@ func main() {
 	if token == "" {
 		log.Fatal("token variable is not specified")
 	}
+	log.Debug("init")
 
 	args := os.Args
+
+	chain, err := markov.LoadChain(args[1])
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	log.Info("successfully loaded: " + args[1])
 
 	if len(args) < 2 {
 		log.Fatal("*.gob chain is not specified")
@@ -30,13 +39,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-
-	chain, err := markov.LoadChain(args[1])
-
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	log.Info("successfully loaded: " + args[1])
 
 	var generated string
 	b.Handle(tg.OnText, func(c tg.Context) error {
