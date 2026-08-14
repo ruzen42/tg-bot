@@ -85,6 +85,14 @@ func main() {
 		return nil
 	})
 
+	b.Handle("/fetch", func(c tg.Context) error {
+		out, err := fastfetch()
+		if err != nil {
+			log.Warn("fetch error: " + err.Error())
+		}
+		return c.Reply(out)
+	})
+
 	b.Handle(tg.OnChannelPost, func(c tg.Context) error {
 		generated := chain.Generate(100)
 		log.Info("generated: " + generated)
